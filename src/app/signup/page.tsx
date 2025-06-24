@@ -1,100 +1,85 @@
-'use client';
-
-import React from "react";
-import { useRouter } from "next/navigation"; // use `next/router` if you're using the pages directory
+"use client";
 import Link from "next/link";
+import React, { useEffect } from "react";
+import {useRouter} from "next/navigation";
+import axios from "axios";
+import { toast } from "react-hot-toast";
+
+
+
 
 export default function SignupPage() {
-  const router = useRouter();
+    const router = useRouter();
+    const [user, setUser] = React.useState({
+        email: "",
+        password: "",
+        username: "",
+    })
+    const [buttonDisabled, setButtonDisabled] = React.useState(false);
+    const [loading, setLoading] = React.useState(false);
 
-  const [user, setUser] = React.useState({
-    username: "",
-    email: "",
-    password: ""
-  });
-
-  const onSignup = async () => {
-    try {
-      console.log("User signing up:", user);
-      // Example: Send request to your API
-      const res = await fetch("/api/signup", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(user),
-      });
-
-      if (res.ok) {
-        alert("Signup successful!");
-        router.push("/login"); // redirect to login page
-      } else {
-        const data = await res.json();
-        alert(`Signup failed: ${data.message || "Unknown error"}`);
-      }
-    } catch (error) {
-      console.error("Signup error:", error);
-      alert("Something went wrong!");
+    const onSignup = async () => {
+        try {
+            setLoading(true);
+            const response = await axios.post("/api/users/signup", user);
+            console.log("Signup success", response.data);
+            router.push("/login");
+            
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } catch (error:any) {
+            console.log("Signup failed", error.message);
+            
+            toast.error(error.message);
+        }finally {
+            setLoading(false);
+        }
     }
-  };
 
-  return (
-    <div className="flex flex-col items-center justify-center min-h-screen py-2 bg-gray-100">
-      <h1 className="text-2xl font-bold mb-4">Signup</h1>
-      <div className="flex flex-col w-full max-w-md gap-4 bg-white p-6 rounded shadow">
-        <label htmlFor="username" className="font-medium">
-          Username
-        </label>
-        <input
-          id="username"
-          name="username"
-          type="text"
-          className="p-2 border border-gray-300 rounded"
-          value={user.username}
-          onChange={(e) => setUser({ ...user, username: e.target.value })}
-          required
-        />
+    useEffect(() => {
+        if(user.email.length > 0 && user.password.length > 0 && user.username.length > 0) {
+            setButtonDisabled(false);
+        } else {
+            setButtonDisabled(true);
+        }
+    }, [user]);
 
-        <label htmlFor="email" className="font-medium">
-          Email
-        </label>
-        <input
-          id="email"
-          name="email"
-          type="email"
-          className="p-2 border border-gray-300 rounded"
-          value={user.email}
-          onChange={(e) => setUser({ ...user, email: e.target.value })}
-          required
-        />
 
-        <label htmlFor="password" className="font-medium">
-          Password
-        </label>
-        <input
-          id="password"
-          name="password"
-          type="password"
-          className="p-2 border border-gray-300 rounded"
-          value={user.password}
-          onChange={(e) => setUser({ ...user, password: e.target.value })}
-          required
-        />
+    return (
+    <div className="flex flex-col items-center justify-center min-h-screen py-2">
+        <h1>{loading ? "Processing" : "Signup"}</h1>
+        <hr />
+        <label htmlFor="username">username</label>
+        <input 
+        className="p-2 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:border-gray-600 text-black"
+            id="username"
+            type="text"
+            value={user.username}
+            onChange={(e) => setUser({...user, username: e.target.value})}
+            placeholder="username"
+            />
+        <label htmlFor="email">email</label>
+        <input 
+        className="p-2 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:border-gray-600 text-black"
+            id="email"
+            type="text"
+            value={user.email}
+            onChange={(e) => setUser({...user, email: e.target.value})}
+            placeholder="email"
+            />
+        <label htmlFor="password">password</label>
+        <input 
+        className="p-2 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:border-gray-600 text-black"
+            id="password"
+            type="password"
+            value={user.password}
+            onChange={(e) => setUser({...user, password: e.target.value})}
+            placeholder="password"
+            />
+            <button
+            onClick={onSignup}
+            className="p-2 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:border-gray-600">{buttonDisabled ? "No signup" : "Signup"}</button>
+            <Link href="/login">Visit login page</Link>
+        </div>
+    )
 
-        <button
-          onClick={onSignup}
-          className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700"
-        >
-          Sign Up
-        </button>
-
-        <p className="text-sm mt-2">
-          Already have an account?{" "}
-          <Link href="/login" className="text-blue-500 underline">
-            Login here
-          </Link>
-        </p>
-      </div>
-    </div>
-  );
 }
