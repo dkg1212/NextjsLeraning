@@ -211,7 +211,7 @@ export default function Home() {
                 <span className="text-white font-bold text-lg">TS</span>
               </div>
               <h4 className="font-semibold text-black">TypeScript</h4>
-              <p className="text-gray-700 text-sm">Type Safety</p>
+              <p className="text-gray-700 text-sm">TypeScript</p>
             </div>
           </div>
         </div>
