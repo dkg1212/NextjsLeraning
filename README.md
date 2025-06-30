@@ -123,7 +123,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 ## 📁 Project Structure
 
 
-.
+```
 ├── src/
 │   ├── app/
 │   │   ├── api/                # Backend API routes for user actions
@@ -156,6 +156,8 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 ├── package.json
 ├── postcss.config.mjs          # PostCSS configuration (includes Tailwind)
 └── tsconfig.json               # TypeScript configuration
+
+```
 
 ## 🎯 Learning Outcomes
 
