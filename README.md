@@ -17,7 +17,7 @@ Below is a demonstration of the core user interactions, including the dynamic th
 
 <p align="center">
   <!-- IMPORTANT: You should create a GIF of your app and replace this placeholder -->
-  <img src="https://user-images.githubusercontent.com/10982541/223237199-31189311-53d3-4679-8698-4674a275b283.gif" alt="App Demo GIF" width="800"/>
+  <img src="my-app-home-page.gif" alt="App Demo GIF" width="800"/>
   <em><br>Demonstration of login page with dynamic dark mode and interactive validation.</em>
 </p>
 
@@ -93,22 +93,72 @@ Make sure you have the following installed:
 Create a file named `.env` in the root of the project and add the following variables:
 
 ```env
-# --- MongoDB Connection ---
-# Get this from your MongoDB Atlas dashboard or local instance
-MONGO_URI=mongodb+srv://<user>:<password>@<cluster-url>/<db-name>?retryWrites=true&w=majority
 
-# --- JWT Secret ---
-# A long, random, and secret string for signing JWT tokens
-# You can generate one here: https://acte.ltd/utils/randomkeygen
-TOKEN_SECRET=your_super_secret_jwt_key_here
-
-# --- App Domain ---
-# The domain of your application for creating verification links
-# For local development:
+MONGODB_URI=your_mongodb_connection_string
+TOKEN_SECRET=your_jwt_secret_key
 DOMAIN=http://localhost:3000
 
-# --- Nodemailer (for sending emails) ---
-# Use an app-specific password if using Gmail
-# See: https://support.google.com/accounts/answer/185833
-NODEMAILER_USER=your_email@gmail.com
-NODEMAILER_PASS=your_gmail_app_password_here
+# Email configuration
+SMTP_HOST=your_smtp_host
+SMTP_PORT=587
+SMTP_USER=abc123
+SMTP_PASS=abc123
+SMTP_FROM=your_email_password
+EMAIL=your_email
+PASSWORD=abc123
+EMAIL_SERVICE=gmail
+
+```
+
+Run the development server:
+
+```bash
+npm run dev
+# or
+pnpm dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+## 📁 Project Structure
+
+
+.
+├── src/
+│   ├── app/
+│   │   ├── api/                # Backend API routes for user actions
+│   │   ├── forgotpassword/     # "Forgot Password" page
+│   │   ├── login/              # Login page
+│   │   ├── profile/            # User profile page
+│   │   ├── resetpassword/      # "Reset Password" page
+│   │   ├── signup/             # Signup page
+│   │   ├── verifyemail/        # Email verification page
+│   │   ├── favicon.ico
+│   │   ├── globals.css         # Global styles and theme variables
+│   │   ├── layout.tsx          # Main application layout
+│   │   └── page.tsx            # The homepage component
+│   │
+│   ├── dbConfig/               # MongoDB connection configuration
+│   │
+│   ├── helpers/
+│   │   ├── getDataFromToken.ts # Helper function to decode JWT from cookies
+│   │   └── mailer.ts           # Nodemailer configuration and email sending logic
+│   │
+│   ├── models/
+│   │   └── userModel.js        # Mongoose schema for the 'User' collection
+│   │
+│   └── middleware.ts           # Handles protected routes and authentication checks
+│
+├── public/                     # Static assets
+│
+├── .env                        # Environment variables (ignored by git)
+├── next.config.ts              # Next.js configuration
+├── package.json
+├── postcss.config.mjs          # PostCSS configuration (includes Tailwind)
+└── tsconfig.json               # TypeScript configuration
+
+## 🎯 Learning Outcomes
+
+This project demonstrates authentication patterns, secure token handling, email integration, and full-stack development best practices using the latest Next.js features.
+
+_Built with AI assistance for frontend development and traditional coding for backend implementation._
