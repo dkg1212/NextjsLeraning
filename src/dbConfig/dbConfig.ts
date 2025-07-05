@@ -1,19 +1,46 @@
-import mongoose from 'mongoose';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import mongoose from "mongoose";
 
-export async function connect(){
-    try {
-        mongoose.connect(process.env.MONGO_URI!);
-        const connection=mongoose.connection;
+const MONGO_URI = process.env.MONGO_URI!;
 
-        connection.on('connected',()=>{
-            console.log('MongoDB Connected ');
-        })
-        connection.on('error',(err)=>{
-            console.log("MongoDB connection error .Please make Sure MongoDB is runnning  welll ."+err);
-            process.exit();
-        })
+if (!MONGO_URI) {
+  throw new Error("Please define the MONGO_URI environment variable");
+}
 
-    }catch(error){
-        console.log("something went Wrong "+error);
-    }
+// Global cache to reuse the connection across requests
+let cached = (global as any).mongoose;
+
+if (!cached) {
+  cached = (global as any).mongoose = { conn: null, promise: null };
+}
+
+export async function connect() {
+  if (cached.conn) {
+    return cached.conn;
+  }
+
+  if (!cached.promise) {
+    cached.promise = mongoose.connect(MONGO_URI, {
+      dbName: "next-auth",       // use your db name
+      bufferCommands: false,     // avoids silent failure
+    });
+  }
+
+  try {
+    cached.conn = await cached.promise;
+
+    mongoose.connection.on("connected", () => {
+      console.log("✅ MongoDB connected");
+    });
+
+    mongoose.connection.on("error", (err) => {
+      console.error("❌ MongoDB connection error:", err);
+      process.exit(1);
+    });
+
+    return cached.conn;
+  } catch (error) {
+    console.error("❌ MongoDB connection failed:", error);
+    throw error;
+  }
 }
